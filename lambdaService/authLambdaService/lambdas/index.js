@@ -1,4 +1,4 @@
 import auth from './auth';
-
-export { auth };
+import verifyOtp from './verifyOtp';
+export { auth, verifyOtp };
 

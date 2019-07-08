@@ -1,3 +1,3 @@
-import { auth } from './lambdas';
+import { auth, verifyOtp } from './lambdas';
 
-export { auth };
+export { auth, verifyOtp };

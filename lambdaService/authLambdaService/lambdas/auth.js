@@ -1,26 +1,24 @@
 import { createResponseObject, createErrorResponseObject } from '../../utils/utils';
 import { Client } from 'pg';
-import * as uuid from "uuid";
+import * as AWS from "aws-sdk";
 
-const testFunction = async (event, context, callback) => {
+const auth = async (event, context, callback) => {
     try {
-        const timestamp = new Date().getTime();
+        const timestamp = new Date();
+        const phoneNo = decodeURI(event.pathParameters.phoneNo);
         const DB_CONFIG = { host: process.env.DB_HOST, port: process.env.DB_PORT, user: process.env.DB_USER, password: process.env.DB_PASSWORD, database: process.env.DB_NAME };
         const client = new Client(DB_CONFIG);
         await client.connect()
-        const res = await client.query(`DROP TABLE Users`);
-        const res = await client.query(`
-            CREATE TABLE Users(user_id SERIAL PRIMARY KEY,
-            first_name VARCHAR (50),
-            last_name VARCHAR (50),
-            phone_no VARCHAR (15) UNIQUE NOT NULL,
-            created_on TIMESTAMP NOT NULL,
-            last_login TIMESTAMP
-         )`);
 
-        const result = await client.query(`INSERT INTO Users(phone_no, created_on) VALUES ('7405237892', ${timestamp})`);
+        const OTP = Math.floor(100000 + Math.random() * 900000)
+        const result = await client.query(`INSERT INTO Users(phone_no, created_on) VALUES ($1,$2) RETURNING user_id`, [phoneNo, timestamp]);
+        const newlyCreatedUserId = result.rows[0].user_id;
+
+        const insertOtp = await client.query(`INSERT INTO otp(user_id,otp,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [newlyCreatedUserId, OTP, timestamp]);
+        await sendOtp(OTP, phoneNo);
+
         await client.end();
-        callback(null, createResponseObject(result));
+        callback(null, createResponseObject(newlyCreatedUserId));
     }
     catch (err) {
         console.log("err in lambda", err);
@@ -28,4 +26,28 @@ const testFunction = async (event, context, callback) => {
     }
 };
 
-export default testFunction;
+export default auth;
+
+const sendOtp = async (OTP, phoneNo) => {
+    let otp = OTP.toString();
+    var sns = new AWS.SNS();
+
+    sns.publish({
+        Message: `OTP: ` + otp,
+        MessageAttributes: {
+            'AWS.SNS.SMS.SMSType': {
+                DataType: 'String',
+                StringValue: 'Transactional'
+            },
+            'AWS.SNS.SMS.SenderID': {
+                DataType: 'String',
+                StringValue: 'sendingOtp'
+            },
+        },
+        PhoneNumber: phoneNo
+    }, function (err, data) {
+        if (err) console.log(err, err.stack);
+        else console.log(data);
+    });
+
+}
