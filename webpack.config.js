@@ -13,20 +13,24 @@ module.exports = {
         include: __dirname,
         exclude: /node_modules/,
       },
-      {
-        test: /\.json$/,
-        loaders: ['json']
-      },
+      // {
+      //   test: /\.json$/,
+      //   loaders: ['json-loader']
+      // },
       {
         test: /\.node$/,
         loaders: ['node-loader'],
+      },
+      {
+        test: /\.pem$/i,
+        loaders: ['raw-loader'],
       }
     ]
   },
   externals: [
     (function () {
       var IGNORES = [
-        'electron'
+        'electron', 'pg-native'
       ];
       return function (context, request, callback) {
         if (IGNORES.indexOf(request) >= 0) {
