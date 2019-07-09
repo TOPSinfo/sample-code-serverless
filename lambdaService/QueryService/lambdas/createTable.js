@@ -7,15 +7,15 @@ const createTable = async (event, context, callback) => {
         const client = new Client(DB_CONFIG);
         await client.connect()
 
-        const res = await client.query(`
-            CREATE TABLE Users(user_id SERIAL PRIMARY KEY, 
-            first_name VARCHAR (50),
-            last_name VARCHAR (50),
-            phone_no VARCHAR (15) UNIQUE NOT NULL,
-            created_on TIMESTAMP without time zone NOT NULL,
-            last_login TIMESTAMP,
-            last_access_screen TIMESTAMP 
-         )`);
+        // const res = await client.query(`
+        //     CREATE TABLE Users(user_id SERIAL PRIMARY KEY, 
+        //     first_name VARCHAR (50),
+        //     last_name VARCHAR (50),
+        //     phone_no VARCHAR (15) UNIQUE NOT NULL,
+        //     created_on TIMESTAMP without time zone NOT NULL,
+        //     last_login TIMESTAMP,
+        //     last_access_screen TIMESTAMP 
+        //  )`);
 
         // const res = await client.query(`
         //     CREATE TABLE Otp(id SERIAL PRIMARY KEY, 
@@ -23,6 +23,13 @@ const createTable = async (event, context, callback) => {
         //     otp INTEGER,
         //     created_on TIMESTAMP without time zone NOT NULL
         // )`);
+
+        const res = await client.query(`
+            CREATE TABLE UsersToken(id SERIAL PRIMARY KEY, 
+            user_id INTEGER,
+            token VARCHAR (125),
+            created_on TIMESTAMP without time zone NOT NULL
+        )`);
 
         await client.end();
         callback(null, createResponseObject(res));

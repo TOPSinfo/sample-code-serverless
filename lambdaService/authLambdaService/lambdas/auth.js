@@ -12,9 +12,17 @@ const auth = async (event, context, callback) => {
 
         const OTP = Math.floor(100000 + Math.random() * 900000)
         const result = await client.query(`INSERT INTO Users(phone_no, created_on) VALUES ($1,$2) RETURNING user_id`, [phoneNo, timestamp]);
+
+        console.log("result here is", result);
+
         const newlyCreatedUserId = result.rows[0].user_id;
 
+        console.log("newlyCreatedUserId", newlyCreatedUserId)
+
         const insertOtp = await client.query(`INSERT INTO otp(user_id,otp,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [newlyCreatedUserId, OTP, timestamp]);
+
+        console.log("insertOtp value is", insert)
+
         await sendOtp(OTP, phoneNo);
 
         await client.end();
