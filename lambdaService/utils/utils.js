@@ -24,24 +24,16 @@ export const createErrorResponseObject = (error_id, error_name, error_msg) => {
     }
 }
 
-export const verifyToken = async (token, userId) => {
-    console.log("token here is", token);
-    console.log("userId here is", userId)
-
-    const DB_CONFIG = { host: process.env.DB_HOST, port: process.env.DB_PORT, user: process.env.DB_USER, password: process.env.DB_PASSWORD, database: process.env.DB_NAME };
-    console.log("DB_CONFIG", DB_CONFIG);
-    const client = new Client(DB_CONFIG);
-
-    console.log("client here is", client);
+export const verifyToken = async (client, token, userId) => {
+    console.log("verify token is called")
+    // const DB_CONFIG = { host: process.env.DB_HOST, port: process.env.DB_PORT, user: process.env.DB_USER, password: process.env.DB_PASSWORD, database: process.env.DB_NAME };    
+    // const client = new Client(DB_CONFIG);
 
     // await client.connect()
 
-    console.log("hello world")
     const result = await client.query(`SELECT * FROM userstoken WHERE user_id=$1`, [userId]);
-
     console.log("result here is", result)
 
-    console.log("result here is", result);
     if(result.length > 0){
         if(result.token === token){
             return true
