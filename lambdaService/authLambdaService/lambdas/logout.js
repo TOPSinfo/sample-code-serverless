@@ -22,7 +22,7 @@ const logout = async (event, context, callback) => {
             callback(null, createResponseObject({ 'msg': 'success' })); 
         }
         else{
-            callback(null, createErrorResponseObject(500, 'INTERNAL_SERVER_ERROR', 'User does not exists'));    
+            callback(null, createErrorResponseObject(401, 'UNAUTHORIZED_USER', 'User does not exists'));    
         }
         
         await client.end();
