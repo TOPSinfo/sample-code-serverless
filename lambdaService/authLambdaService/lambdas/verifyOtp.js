@@ -22,7 +22,7 @@ const verifyOtp = async (event, context, callback) => {
             var secret = 'spotme'
     
             var token = jwt.encode(secret, payload);
-            const insertUserToken = await client.query(`INSERT INTO UsersToken(user_id,token,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [data.user_id, token.value, timestamp]);
+            const insertUserToken = await client.query(`INSERT INTO userstoken(user_id,token,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [data.user_id, token.value, timestamp]);
             callback(null, createResponseObject({ 'msg': 'success' }));
         } else {
             callback(null, createErrorResponseObject(400, 'INVALID_PARAMETER', 'Invalid Otp'));

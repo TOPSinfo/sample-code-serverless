@@ -1,3 +1,3 @@
-import { auth, verifyOtp } from './lambdas';
+import { auth, verifyOtp, logout } from './lambdas';
 
-export { auth, verifyOtp };
+export { auth, verifyOtp, logout };

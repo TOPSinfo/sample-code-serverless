@@ -20,9 +20,6 @@ const auth = async (event, context, callback) => {
         console.log("newlyCreatedUserId", newlyCreatedUserId)
 
         const insertOtp = await client.query(`INSERT INTO otp(user_id,otp,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [newlyCreatedUserId, OTP, timestamp]);
-
-        console.log("insertOtp value is", insert)
-
         await sendOtp(OTP, phoneNo);
 
         await client.end();
