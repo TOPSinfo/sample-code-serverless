@@ -1,4 +1,5 @@
 import { Client } from 'pg';
+import jwt from 'json-web-token';
 
 export const createResponseObject = res => {
     return {
@@ -30,6 +31,16 @@ export const verifyToken = async (client, token, userId) => {
     // const client = new Client(DB_CONFIG);
 
     // await client.connect()
+    // jwt.decode(secret, token, function (err_, decodedPayload, decodedHeader) {
+    //     if (err) {
+    //       console.error(err.name, err.message);
+    //     } else {
+    //       console.log(decodedPayload, decodedHeader);
+    //     }
+    let secret = 'spotme'
+    const decodeToken = await jwt.decode(secret, token)
+
+    console.log("decodeToken here is", decodeToken)
 
     const result = await client.query(`SELECT * FROM userstoken WHERE user_id=$1`, [userId]);
     console.log("result here is", result)

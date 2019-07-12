@@ -12,7 +12,7 @@ const getUserProfile = async (event, context, callback) => {
 
         if(token){
             let userVerified = verifyToken(client, token, user_id) 
-
+            
             if(userVerified){
                 const users = await client.query(`SELECT * FROM users WHERE user_id=$1`, [user_id]);
                 await client.end();
