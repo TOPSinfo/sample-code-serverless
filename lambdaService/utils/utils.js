@@ -2,6 +2,7 @@ import { Client } from 'pg';
 import jwt from 'json-web-token';
 
 export const createResponseObject = res => {
+    console.log("res here is", res)
     return {
         statusCode: 200,
         headers: {
