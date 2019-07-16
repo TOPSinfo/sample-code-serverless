@@ -6,7 +6,7 @@ const auth = async (event, context, callback) => {
     try {
         const timestamp = new Date();
         let data = JSON.parse(event.body);
-        
+                    
         //Example object in body
         // let data = {
         //     'userId' : 12345,

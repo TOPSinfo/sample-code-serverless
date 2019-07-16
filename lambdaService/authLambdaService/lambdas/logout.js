@@ -8,7 +8,8 @@ const logout = async (event, context, callback) => {
     try {
         console.log("lout value is called")
         const timestamp = new Date();
-        let data = JSON.parse(event.body);
+        const userId = decodeURI(event.pathParameters.userId);
+        // let data = JSON.parse(event.body);
 
         console.log("data value is", data)
 
@@ -17,7 +18,7 @@ const logout = async (event, context, callback) => {
         await client.connect();
 
         // const insertUserToken = await client.query(`INSERT INTO UsersToken(user_id,token,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [data.user_id, token.value, timestamp]);
-        const deleteToken = await client.query(`DELETE FROM userstoken  WHERE user_id=$1`, [data.user_id]);
+        const deleteToken = await client.query(`DELETE FROM userstoken  WHERE user_id=$1`, [userId]);
         if(deleteToken.rowCount === 1){
             callback(null, createResponseObject({ 'msg': 'success' })); 
         }

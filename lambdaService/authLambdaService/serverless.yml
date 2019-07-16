@@ -58,5 +58,6 @@ functions:
     handler: handler.logout
     events:
       - http:
-          path: /auth/logout
-          method: post
+          path: /auth/logout/{userId}
+          method: get
+          cors: true

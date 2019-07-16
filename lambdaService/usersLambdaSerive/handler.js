@@ -1,3 +1,3 @@
-import { getUserProfile } from './lambdas';
+import { getUserProfile, updateUserProfile, updateLastVisitedScreen, fetchLastVisitedScreen } from './lambdas';
 
-export { getUserProfile };
+export { getUserProfile, updateUserProfile, updateLastVisitedScreen, fetchLastVisitedScreen };

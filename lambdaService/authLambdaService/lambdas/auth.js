@@ -10,20 +10,26 @@ const auth = async (event, context, callback) => {
         const client = new Client(DB_CONFIG);
         await client.connect()
 
-        const OTP = Math.floor(100000 + Math.random() * 900000)
+        let OTP = Math.floor(100000 + Math.random() * 900000)
+        let userId
 
         const user = await client.query(`SELECT * FROM users WHERE phone_no=$1`, [phoneNo]);
 
-        const result = user;
+        let result = user;
+        
         if(user.rows.length === 0){
             result = await client.query(`INSERT INTO Users(phone_no, created_on) VALUES ($1,$2) RETURNING user_id`, [phoneNo, timestamp]);
+            userId = result.rows[0].user_id;
+            const insertOtp = await client.query(`INSERT INTO otp(user_id,otp,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [userId, OTP, timestamp]);
         }
-        const newlyCreatedUserId = result.rows[0].user_id;
-        const insertOtp = await client.query(`INSERT INTO otp(user_id,otp,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [newlyCreatedUserId, OTP, timestamp]);
+        else{
+            const insertOtp = await client.query(`SELECT * FROM otp WHERE user_id=$1`, [user.rows[0].user_id]);
+            userId = user.rows[0].user_id
+            OTP = insertOtp.rows[0].otp
+        }
         await sendOtp(OTP, phoneNo);
-
         await client.end();
-        callback(null, createResponseObject({'user_id' : newlyCreatedUserId}));
+        callback(null, createResponseObject({'user_id' : userId}));
     }
     catch (err) {
         console.log("err in lambda", err);

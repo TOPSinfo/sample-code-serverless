@@ -1,4 +1,4 @@
-service: spot-me-lambdas-user-service
+service: spot-me-lambdas-contact-service
 
 plugins:
   - serverless-webpack
@@ -39,31 +39,10 @@ provider:
     DB_NAME: spot_me 
     stage: ${self:custom.stage}
 functions:
-  getUserProfile:
-    handler: handler.getUserProfile
+  contactSync:
+    handler: handler.contactSync
     events:
       - http:
-          path: /user/get-profile/{userId}
-          method: get
-          cors: true
-  updateUserProfile:
-    handler: handler.updateUserProfile
-    events:
-      - http:
-          path: /user/update-profile
+          path: /contact/contact-sync
           method: post
-          cors: true
-  updateLastVisitedScreen:
-    handler: handler.updateLastVisitedScreen
-    events:
-      - http:
-          path: /user/update-last-screen
-          method: post
-          cors: true
-  fetchLastVisitedScreen:
-    handler: handler.fetchLastVisitedScreen
-    events:
-      - http:
-          path: /user/fetch-last-screen/{userId}
-          method: get
           cors: true

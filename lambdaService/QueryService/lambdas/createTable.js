@@ -7,15 +7,20 @@ const createTable = async (event, context, callback) => {
         const client = new Client(DB_CONFIG);
         await client.connect()
 
-        // const res = await client.query(`
-        //     CREATE TABLE Users(user_id SERIAL PRIMARY KEY, 
-        //     first_name VARCHAR (50),
-        //     last_name VARCHAR (50),
-        //     phone_no VARCHAR (15) UNIQUE NOT NULL,
-        //     created_on TIMESTAMP without time zone NOT NULL,
-        //     last_login TIMESTAMP,
-        //     last_access_screen TIMESTAMP 
-        //  )`);
+        const res = await client.query(`
+            CREATE TABLE Users(user_id SERIAL PRIMARY KEY,
+                first_name VARCHAR (50) NULL,
+                last_name VARCHAR (50) NULL,
+                email VARCHAR (355) UNIQUE NULL,
+                created_on TIMESTAMP  NULL,
+                last_login TIMESTAMP,
+                user_image VARCHAR (100)  NULL,
+                device_type VARCHAR (50)  NULL,
+                device_id VARCHAR (100)  NULL,
+                device_name VARCHAR (100)  NULL,
+                last_visited_screen VARCHAR (100)  NULL,
+                phone_no VARCHAR (15) UNIQUE NOT NULL
+         )`);
 
         // const res = await client.query(`
         //     CREATE TABLE Otp(id SERIAL PRIMARY KEY, 
@@ -24,12 +29,12 @@ const createTable = async (event, context, callback) => {
         //     created_on TIMESTAMP without time zone NOT NULL
         // )`);
 
-        const res = await client.query(`
-            CREATE TABLE UsersToken(id SERIAL PRIMARY KEY, 
-            user_id INTEGER,
-            token VARCHAR (125),
-            created_on TIMESTAMP without time zone NOT NULL
-        )`);
+        // const res = await client.query(`
+        //     CREATE TABLE UsersToken(id SERIAL PRIMARY KEY, 
+        //     user_id INTEGER,
+        //     token VARCHAR (125),
+        //     created_on TIMESTAMP without time zone NOT NULL
+        // )`);
 
         await client.end();
         callback(null, createResponseObject(res));

@@ -1,4 +1,4 @@
-service: spot-me-lambdas-event-service
+service: spot-me-lambdas-user-service
 
 plugins:
   - serverless-webpack
@@ -39,10 +39,25 @@ provider:
     DB_NAME: spot_me 
     stage: ${self:custom.stage}
 functions:
-  contactSync:
-    handler: handler.contactSync
+  verifyOtp:
+    handler: handler.verifyOtp
     events:
       - http:
-          path: /event/contact-sync
+          path: /auth/verify-otp
           method: post
+          cors: true
+  auth:
+    handler: handler.auth
+    events:
+      - http:
+          path: /auth/{phoneNo}
+          method: get
+          cors: true
+      - sns: sendingOtp
+  logout:
+    handler: handler.logout
+    events:
+      - http:
+          path: /auth/logout/{userId}
+          method: get
           cors: true
