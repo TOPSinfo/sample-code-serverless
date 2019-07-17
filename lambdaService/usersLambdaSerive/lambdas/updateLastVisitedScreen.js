@@ -12,7 +12,7 @@ const updateLastVisitedScreen = async (event, context, callback) => {
         await client.connect()
 
         if(token){
-            let userVerified = verifyToken(client, token, data.user_id) 
+            let userVerified = await verifyToken(client, token, data.user_id) 
             
             if(userVerified){
                 const user = await client.query(`UPDATE users SET last_visited_screen=($1) WHERE user_id=($2)`, [data.last_visited_screen, data.user_id])

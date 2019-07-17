@@ -11,13 +11,16 @@ const fetchLastVisitedScreen = async (event, context, callback) => {
         await client.connect()
 
         if(token){
-            let userVerified = verifyToken(client, token, user_id) 
-
+            let userVerified = await verifyToken(client, token, user_id) 
+            console.log("userVerified here is", userVerified)
             if(userVerified){
                 let screenToDisplay 
                 const user = await client.query(`SELECT * FROM users WHERE user_id=$1`, [user_id]);
                 
-                if(user.rows[0].last_visited_screen.length === 0){
+                if(!user.rows[0].first_name){
+                    screenToDisplay = 'profile'
+                }
+                else if(user.rows[0].first_name && user.rows[0].first_name.length === 0){
                     screenToDisplay = 'profile'
                 }
                 else{

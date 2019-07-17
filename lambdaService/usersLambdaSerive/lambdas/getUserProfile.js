@@ -11,12 +11,18 @@ const getUserProfile = async (event, context, callback) => {
         await client.connect()
 
         if(token){
-            let userVerified = verifyToken(client, token, user_id) 
+            let userVerified = await verifyToken(client, token, user_id) 
             
             if(userVerified){
                 const users = await client.query(`SELECT * FROM users WHERE user_id=$1`, [user_id]);
                 await client.end();
-                callback(null, createResponseObject(users.rows));
+                const response = {
+                    user_id: users.rows[0].user_id,
+                    username : users.rows[0].first_name,
+                    email: users.rows[0].email,
+                    phone_no: users.rows[0].phone_no
+                }
+                callback(null, createResponseObject(response));
             }
             else{
                 await client.end();
