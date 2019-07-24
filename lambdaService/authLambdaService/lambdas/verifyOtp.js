@@ -20,9 +20,15 @@ const verifyOtp = async (event, context, callback) => {
                 }
             };
             var secret = 'spotme'
-    
             var token = jwt.encode(secret, payload);
-            const insertUserToken = await client.query(`INSERT INTO userstoken(user_id,token,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [data.user_id, token.value, timestamp]);
+
+            console.log("token here is", token)
+
+            const existingSession = await client.query(`SELECT * FROM userstoken WHERE user_id=$1`, [data.user_id]);
+            console.log("existingSession", existingSession)
+            if(existingSession.rows.length <= 0){
+                const insertUserToken = await client.query(`INSERT INTO userstoken(user_id,token,created_on) VALUES ($1,$2,$3) RETURNING user_id`, [data.user_id, token.value, timestamp]);
+            }
             callback(null, createResponseObject({ 'msg': 'success', 'token' : token }));
         } else {
             callback(null, createErrorResponseObject(400, 'INVALID_PARAMETER', 'Invalid Otp'));
@@ -36,3 +42,7 @@ const verifyOtp = async (event, context, callback) => {
 };
 
 export default verifyOtp;
+
+
+"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXF1ZXN0Ijp7InN0YXR1cyI6IlNVQ0NFU1MifX0.FqUhDVLOwAZ0mnjZGtsFABY9rmpQMGQIH4VBHFarngE"
+"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXF1ZXN0Ijp7InN0YXR1cyI6IlNVQ0NFU1MifX0.FqUhDVLOwAZ0mnjZGtsFABY9rmpQMGQIH4VBHFarngE"

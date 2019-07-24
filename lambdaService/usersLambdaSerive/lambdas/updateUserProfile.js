@@ -1,12 +1,13 @@
 import { createResponseObject, createErrorResponseObject, verifyToken } from '../../utils/utils';
 import { Client } from 'pg';
+import http from "http"
 
 const aws = require('aws-sdk')
 const s3 = new aws.S3()
 
 const updateUserProfile = async (event, context, callback) => {
     try {
-    
+        console.log("event value is", event)
         const token =  decodeURI(event.headers.token);
         const data = JSON.parse(event.body)
         const DB_CONFIG = { host: process.env.DB_HOST, port: process.env.DB_PORT, user: process.env.DB_USER, password: process.env.DB_PASSWORD, database: process.env.DB_NAME };
@@ -24,9 +25,10 @@ const updateUserProfile = async (event, context, callback) => {
                 let queryClause = 'WHERE user_id=($1)'
 
                 if('user_image' in data){
-                    s3.putObject({
+                    await s3.upload({
                         Bucket: bucketName,
-                        Key: data.attachment
+                        Key: data.user_image.fileName,
+                        Body: ''
                       }, (error, result) => {
                         console.log(error, result);
                       });
@@ -51,7 +53,21 @@ const updateUserProfile = async (event, context, callback) => {
 
                 const user = await client.query(query, updateArray)
 
-                console.log("user here is", user)
+                // var options = {
+                //     method: 'GET',
+                //     host: 'localhost:9090',        
+                //     path: '/plugins/restapi/v1/users/honey', 
+                //     headers: {
+                //         'accept': 'application/json',
+                //     }
+                // };
+                // const req = http.request(options, function (response) {
+                //     response.on('data', data => dataStr += data);
+                //     response.on('end', () => callback(JSON.parse(dataStr)));
+                //   }).on('error', err => console.log("err here is", err)
+                // );    
+                // req.end()
+                
                 await client.end();
                 callback(null, createResponseObject({'msg' :'success'}));
             }
