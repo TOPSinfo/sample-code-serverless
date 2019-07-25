@@ -30,6 +30,7 @@ provider:
         - sns:*
         - ses:SendEmail
         - ses:SendRawEmail
+        - s3:Upload
       "Resource": "*"
   environment:
     DB_HOST: spot-me-db-instance.cdnduxceh2ya.us-east-1.rds.amazonaws.com

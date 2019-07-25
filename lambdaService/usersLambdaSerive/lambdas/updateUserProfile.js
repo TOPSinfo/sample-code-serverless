@@ -1,15 +1,21 @@
 import { createResponseObject, createErrorResponseObject, verifyToken } from '../../utils/utils';
 import { Client } from 'pg';
-import http from "http"
+import Multipart from "lambda-multipart-parser";
 
 const aws = require('aws-sdk')
-const s3 = new aws.S3()
+const s3 = new aws.S3({
+    accessKeyId: "AKIAZUJATGDNYJNWRZG6",
+    secretAccessKey: "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"
+});
 
 const updateUserProfile = async (event, context, callback) => {
     try {
-        console.log("event value is", event)
         const token =  decodeURI(event.headers.token);
-        const data = JSON.parse(event.body)
+        const data = await Multipart.parse(event);
+            data.user_image = data.files[0];
+            delete data.files;
+        console.log("data here is", data)
+
         const DB_CONFIG = { host: process.env.DB_HOST, port: process.env.DB_PORT, user: process.env.DB_USER, password: process.env.DB_PASSWORD, database: process.env.DB_NAME };
         const client = new Client(DB_CONFIG);
         await client.connect()
@@ -23,15 +29,11 @@ const updateUserProfile = async (event, context, callback) => {
                 let query = `UPDATE users SET device_id=($2), device_type=($3), device_name=($4)`
                 
                 let queryClause = 'WHERE user_id=($1)'
-
+                
                 if('user_image' in data){
-                    await s3.upload({
-                        Bucket: bucketName,
-                        Key: data.user_image.fileName,
-                        Body: ''
-                      }, (error, result) => {
-                        console.log(error, result);
-                      });
+                    let s3Response = await uploadImageOns3(data.user_image);
+                    updateArray.push(s3Response.Location);
+                    query += ` ,user_image=($${updateArray.length})`
                 }
 
                 if('first_name' in data){
@@ -52,22 +54,8 @@ const updateUserProfile = async (event, context, callback) => {
                 console.log("query here is", query)
 
                 const user = await client.query(query, updateArray)
-
-                // var options = {
-                //     method: 'GET',
-                //     host: 'localhost:9090',        
-                //     path: '/plugins/restapi/v1/users/honey', 
-                //     headers: {
-                //         'accept': 'application/json',
-                //     }
-                // };
-                // const req = http.request(options, function (response) {
-                //     response.on('data', data => dataStr += data);
-                //     response.on('end', () => callback(JSON.parse(dataStr)));
-                //   }).on('error', err => console.log("err here is", err)
-                // );    
-                // req.end()
                 
+                console.log("user value is", user)
                 await client.end();
                 callback(null, createResponseObject({'msg' :'success'}));
             }
@@ -87,3 +75,21 @@ const updateUserProfile = async (event, context, callback) => {
 };
 
 export default updateUserProfile;
+
+function uploadImageOns3(userImage) {
+    return new Promise(function(res, rej) {
+      let key = userImage.filename;
+      let params = {
+        Bucket: "spot-me-user-image",
+        Key: key,
+        Body: userImage.content,
+        ACL: "public-read"
+      };
+      s3.upload(params, function(err, data) {
+        if (err) {
+          rej(err);
+        }
+        res(data);
+      });
+    });
+  }

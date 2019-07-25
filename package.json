@@ -10,6 +10,7 @@
     "aws-sdk": "^2.493.0",
     "joi": "^14.3.1",
     "json-web-token": "^3.0.1",
+    "lambda-multipart-parser": "0.0.2",
     "pg": "^7.11.0",
     "serverless-domain-manager": "^3.2.6",
     "serverless-webpack": "^5.3.1",
