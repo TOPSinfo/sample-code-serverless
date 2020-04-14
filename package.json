@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "APIs for spot me app",
   "main": "index.js",
-  "author": "Aman Gupta",
+  "author": "",
   "license": "MIT",
   "private": true,
   "dependencies": {
