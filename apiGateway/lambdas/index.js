@@ -1,3 +1,3 @@
-import spotme from "./spotme";
+import sampleCode from "./sampleCode";
 
-export { spotme };
+export { sampleCode };

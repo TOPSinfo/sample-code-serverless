@@ -9,17 +9,17 @@ custom:
   # commands. Or fallsback to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
   webpack:
-    webpackConfig: '../webpack.config.js'   # Name of webpack configuration file
-    includeModules: false   # Node modules configuration for packaging
-    packager: 'yarn'   # Packager that will be used to package your external modules
+    webpackConfig: "../webpack.config.js" # Name of webpack configuration file
+    includeModules: false # Node modules configuration for packaging
+    packager: "yarn" # Packager that will be used to package your external modules
   domains:
-    prod: api.spot-me.tech
-    dev: dev-api.spot-me.tech
+    prod: sample-prod.com
+    dev: sample-dev.com
   customDomain:
     domainName: ${self:custom.domains.${self:custom.stage}}
     stage: "${self:custom.stage}"
     basePath: "api"
-    certificateArn: 'arn:aws:acm:us-east-1:662030201051:certificate/6ac7f4eb-5968-443f-ac7e-6c7511f1fdce'
+    certificateArn: "arn:aws:acm:us-east-1:662030201051:certificate/6ac7f4eb-5968-443f-ac7e-6c7511f1fdce"
     createRoute53Record: false
   package:
     individually: true
@@ -31,25 +31,25 @@ provider:
   region: us-east-1
 
 functions:
-  spotme:
-    handler: handler.spotme
+  sampleCode:
+    handler: handler.sampleCode
     events:
       - http:
-          path: /spotme
+          path: /sampleCode
           method: get
           cors: true
 resources:
   Resources:
     GatewayResponse:
-      Type: 'AWS::ApiGateway::GatewayResponse'
+      Type: "AWS::ApiGateway::GatewayResponse"
       Properties:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: EXPIRED_TOKEN
         RestApiId:
-          Ref: 'ApiGatewayRestApi'
-        StatusCode: '401'
+          Ref: "ApiGatewayRestApi"
+        StatusCode: "401"
   Outputs:
     ApiGatewayRestApiId:
       Value:
@@ -59,7 +59,7 @@ resources:
 
     ApiGatewayRestApiRootResourceId:
       Value:
-         Fn::GetAtt:
+        Fn::GetAtt:
           - ApiGatewayRestApi
           - RootResourceId
       Export:

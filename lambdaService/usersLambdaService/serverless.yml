@@ -8,9 +8,9 @@ custom:
   # commands. Or fallsback to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
   webpack:
-    webpackConfig: '../../webpack.config.js'   # Name of webpack configuration file
-    includeModules: false   # Node modules configuration for packaging
-    packager: 'yarn'   # Packager that will be used to package your external modules
+    webpackConfig: "../../webpack.config.js" # Name of webpack configuration file
+    includeModules: false # Node modules configuration for packaging
+    packager: "yarn" # Packager that will be used to package your external modules
   package:
     individually: true
 
@@ -21,9 +21,9 @@ provider:
   region: us-east-1
   apiGateway:
     restApiId:
-      'Fn::ImportValue': ${self:custom.stage}-ApiGatewayRestApiId
+      "Fn::ImportValue": ${self:custom.stage}-ApiGatewayRestApiId
     restApiRootResourceId:
-      'Fn::ImportValue': ${self:custom.stage}-ApiGatewayRestApiRootResourceId
+      "Fn::ImportValue": ${self:custom.stage}-ApiGatewayRestApiRootResourceId
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -33,11 +33,6 @@ provider:
         - s3:Upload
       "Resource": "*"
   environment:
-    DB_HOST: spot-me-db-instance.cdnduxceh2ya.us-east-1.rds.amazonaws.com
-    DB_PORT: 5432
-    DB_USER: spotmedev
-    DB_PASSWORD: spotme?123
-    DB_NAME: spot_me 
     stage: ${self:custom.stage}
 functions:
   getUserProfile:
@@ -61,10 +56,10 @@ functions:
           path: /user/update-last-screen
           method: post
           cors: true
-  fetchLastVisitedScreen:
-    handler: handler.fetchLastVisitedScreen
+  deleteUser:
+    handler: handler.deleteUser
     events:
       - http:
-          path: /user/fetch-last-screen/{userId}
-          method: get
+          path: /user/{userId}
+          method: delete
           cors: true

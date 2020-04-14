@@ -1,3 +1,3 @@
-import { spotme } from "./lambdas";
+import { sampleCode } from "./lambdas";
 
-export { spotme };
+export { sampleCode };
