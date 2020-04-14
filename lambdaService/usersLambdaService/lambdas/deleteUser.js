@@ -47,7 +47,7 @@ const deleteUser = async (event, context, callback) => {
       createErrorResponseObject(
         500,
         "INTERNAL_SERVER_ERROR",
-        "Could not execute delete event function"
+        "Could not execute delete user function"
       )
     );
   }
